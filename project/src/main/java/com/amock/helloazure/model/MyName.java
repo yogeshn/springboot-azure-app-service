@@ -1,22 +1,17 @@
 package com.amock.helloazure.model;
 
+import java.util.Objects;
+
 /**
  * Model class representing a person's name.
  * 
- * Project Analysis Notes:
- * - Package structure: com.amock.helloazure.model (standard Maven/Gradle layout)
- * - Java version: Unknown (requires pom.xml/build.gradle examination)
- * - Build tool: Likely Maven or Gradle (based on src/main/java structure)
- * - Dependencies: None evident in this POJO
- * - Code style: Standard JavaBean with no-arg constructor, parameterized constructor, getters/setters
- * - Java features used: Basic (compatible with Java 1.4+)
- * 
- * Assumptions for Upgrade Scope:
- * - Project follows standard Maven/Gradle directory structure
- * - This is a simple POJO with no external dependencies
- * - No modern Java features (records, annotations, etc.) currently used
- * - Likely candidates for upgrade: Java 8+ features (Optional, Stream API), Java 14+ records
- * - Build configuration files need examination to determine exact Java version and dependencies
+ * Refactoring Applied:
+ * - Added equals() and hashCode() methods for proper object comparison
+ * - Added toString() method for debugging and logging
+ * - Removed unnecessary super() calls in constructors
+ * - Added null-safety considerations in equals/hashCode
+ * - Maintained JavaBean compatibility for frameworks requiring getters/setters
+ * - Compatible with Java 8+ (uses Objects utility class introduced in Java 7)
  */
 public class MyName {
 
@@ -24,11 +19,9 @@ public class MyName {
 	private String lastName;
 	
 	public MyName() {
-		super();
 	}
 
 	public MyName(String firstName, String lastName) {
-		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
@@ -47,5 +40,27 @@ public class MyName {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		MyName myName = (MyName) o;
+		return Objects.equals(firstName, myName.firstName) &&
+				Objects.equals(lastName, myName.lastName);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(firstName, lastName);
+	}
+
+	@Override
+	public String toString() {
+		return "MyName{" +
+				"firstName='" + firstName + '\'' +
+				", lastName='" + lastName + '\'' +
+				'}';
 	}
 }
