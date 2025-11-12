@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">  
+  <modelVersion>4.0.0</modelVersion>
+  
+  <!-- 
+    PROJECT ANALYSIS SUMMARY:
+    
+    Current Configuration:
+    - Build Tool: Maven 4.0.0
+    - Java Version: 1.8 (Java 8)
+    - Spring Boot Version: 2.1.4.RELEASE (Released April 2019, EOL - End of Support)
+    - Packaging: JAR (default)
+    - Target Platform: Azure App Service (Linux, Java SE)
+    
+    Dependencies:
+    - spring-boot-starter-web (REST/Web MVC support)
+    - spring-boot-starter-thymeleaf (Template engine)
+    - spring-boot-starter-test (Testing framework, test scope)
+    
+    Plugins:
+    - spring-boot-maven-plugin (Spring Boot packaging)
+    - azure-webapp-maven-plugin v1.14.0 (Azure deployment)
+    
+    Project Status:
+    - Source code location not visible in pom.xml (assumes standard Maven structure: src/main/java, src/test/java)
+    - Zero lines of code reported suggests either:
+      a) Empty project with only build configuration
+      b) Code exists in standard locations but not analyzed
+      c) Code in non-standard locations
+    
+    Assumptions for Upgrade Scope:
+    1. Standard Maven directory structure (src/main/java, src/main/resources, src/test/java)
+    2. Minimal or no custom source code (given zero LOC report)
+    3. Target upgrade path: Java 8 → Java 11/17/21
+    4. Spring Boot upgrade path: 2.1.4 → 2.7.x or 3.x (requires Java 17+)
+    5. Azure plugin may need update for newer Java versions
+    6. No custom Maven profiles or complex build configurations detected
+    7. No explicit compiler plugin configuration (inherits from parent)
+    8. No database or external service dependencies visible
+    
+    Recommended Upgrade Strategy:
+    - Conservative: Java 11 + Spring Boot 2.7.x (LTS, maintains compatibility)
+    - Moderate: Java 17 + Spring Boot 3.0.x (Current LTS)
+    - Aggressive: Java 21 + Spring Boot 3.2.x (Latest LTS)
+    
+    Breaking Changes to Consider:
+    - Spring Boot 2.x → 3.x requires Java 17 minimum
+    - Jakarta EE namespace changes (javax.* → jakarta.*)
+    - Deprecated API removals
+    - Azure plugin compatibility with newer Java versions
+    - Thymeleaf and other dependency updates
+    
+    Required Verification:
+    - Check src/main/java for actual source files
+    - Review src/main/resources for configuration files
+    - Verify Azure subscription and resource group still valid
+    - Test deployment configuration after upgrade
+  -->
+  
+  <parent> 
+    <groupId>org.springframework.boot</groupId>  
+    <artifactId>spring-boot-starter-parent</artifactId>  
+    <version>2.1.4.RELEASE</version>  
+    <relativePath/>  
+    <!-- lookup parent from repository --> 
+  </parent>  
+  <groupId>com.kalyan</groupId>  
+  <artifactId>springboot-azure-app-service</artifactId>  
+  <version>0.0.1-SNAPSHOT</version>  
+  <name>springboot-azure-app-service</name>  
+  <description>Spring Boot Hello World On Azure</description>  
+  <properties> 
+    <java.version>1.8</java.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>  
+  <dependencies> 
+    <dependency> 
+      <groupId>org.springframework.boot</groupId>  
+      <artifactId>spring-boot-starter-web</artifactId> 
+    </dependency>  
+    <dependency> 
+      <groupId>org.springframework.boot</groupId>  
+      <artifactId>spring-boot-starter-thymeleaf</artifactId> 
+    </dependency>  
+    <dependency> 
+      <groupId>org.springframework.boot</groupId>  
+      <artifactId>spring-boot-starter-test</artifactId>  
+      <scope>test</scope> 
+    </dependency> 
+  </dependencies>  
+  <build> 
+    <plugins> 
+      <plugin> 
+        <groupId>org.springframework.boot</groupId>  
+        <artifactId>spring-boot-maven-plugin</artifactId> 
+      </plugin>  
+      <plugin> 
+        <groupId>com.microsoft.azure</groupId>  
+        <artifactId>azure-webapp-maven-plugin</artifactId>  
+        <version>1.14.0</version>  
+        <configuration>
+          <schemaVersion>v2</schemaVersion>
+          <subscriptionId>010799ed-43ef-424e-97c9-41e2b17dbd38</subscriptionId>
+          <resourceGroup>kalyan-resource-group</resourceGroup>
+          <appName>kalyan-springboot-azure-app-service</appName>
+          <pricingTier>F1</pricingTier>
+          <region>westeurope</region>
+          <appSettings>
+          	<property>
+          		<name>JAVA_OPTS</name>
+          		<value>-Dserver.port=80</value>
+          	</property>
+          </appSettings>
+          <runtime>
+            <os>Linux</os>
+            <javaVersion>Java 8</javaVersion>
+            <webContainer>Java SE</webContainer>
+          </runtime>
+          <deployment>
+            <resources>
+              <resource>
+                <directory>${project.basedir}/target</directory>
+                <includes>
+                  <include>*.jar</include>
+                </includes>
+              </resource>
+            </resources>
+          </deployment>
+        </configuration>
+      </plugin> 
+    </plugins> 
+  </build> 
+</project>
