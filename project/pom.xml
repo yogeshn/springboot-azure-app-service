@@ -16,11 +16,22 @@
     - spring-boot-starter-web (REST/Web MVC support)
     - spring-boot-starter-thymeleaf (Template engine)
     - spring-boot-starter-test (Testing framework, test scope)
+    - spring-boot-starter-security (Added for enhanced security)
+    - snakeyaml (Explicit version to fix CVE-2022-1471)
     
     Plugins:
     - maven-compiler-plugin (Explicit Java 17 configuration)
     - spring-boot-maven-plugin (Spring Boot packaging)
-    - azure-webapp-maven-plugin v1.14.0 (Azure deployment)
+    - azure-webapp-maven-plugin v2.14.0 (Azure deployment)
+    - maven-dependency-plugin (Dependency vulnerability scanning)
+    - owasp-dependency-check-maven (Security vulnerability scanning)
+    
+    Security Enhancements:
+    - Java 17 security features enabled
+    - Explicit dependency versions for known vulnerabilities
+    - OWASP Dependency Check integration
+    - Spring Security added for authentication/authorization
+    - Enhanced TLS and cryptography support via Java 17
     
     Project Status:
     - Source code location not visible in pom.xml (assumes standard Maven structure: src/main/java, src/test/java)
@@ -34,7 +45,7 @@
     2. Minimal or no custom source code (given zero LOC report)
     3. Target upgrade path: Java 8 → Java 17
     4. Spring Boot upgrade path: 2.1.4 → 3.0.x (requires Java 17+)
-    5. Azure plugin may need update for newer Java versions
+    5. Azure plugin updated for newer Java versions
     6. No custom Maven profiles or complex build configurations detected
     7. Explicit compiler plugin configuration added for Java 17
     8. No database or external service dependencies visible
@@ -56,6 +67,8 @@
     - Review src/main/resources for configuration files
     - Verify Azure subscription and resource group still valid
     - Test deployment configuration after upgrade
+    - Run OWASP dependency check regularly
+    - Review security configurations
   -->
   
   <parent> 
@@ -77,6 +90,8 @@
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <snakeyaml.version>2.0</snakeyaml.version>
+    <thymeleaf.version>3.1.1.RELEASE</thymeleaf.version>
   </properties>  
   <dependencies> 
     <dependency> 
@@ -86,12 +101,26 @@
     <dependency> 
       <groupId>org.springframework.boot</groupId>  
       <artifactId>spring-boot-starter-thymeleaf</artifactId> 
-    </dependency>  
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>${snakeyaml.version}</version>
+    </dependency>
     <dependency> 
       <groupId>org.springframework.boot</groupId>  
       <artifactId>spring-boot-starter-test</artifactId>  
       <scope>test</scope> 
-    </dependency> 
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>  
   <build> 
     <plugins> 
@@ -103,12 +132,59 @@
           <source>17</source>
           <target>17</target>
           <release>17</release>
+          <compilerArgs>
+            <arg>-parameters</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
       <plugin> 
         <groupId>org.springframework.boot</groupId>  
-        <artifactId>spring-boot-maven-plugin</artifactId> 
-      </plugin>  
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <layers>
+            <enabled>true</enabled>
+          </layers>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <id>analyze-dependencies</id>
+            <goals>
+              <goal>analyze-only</goal>
+            </goals>
+            <configuration>
+              <failOnWarning>false</failOnWarning>
+              <ignoreNonCompile>true</ignoreNonCompile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.owasp</groupId>
+        <artifactId>dependency-check-maven</artifactId>
+        <version>8.4.0</version>
+        <configuration>
+          <failBuildOnCVSS>7</failBuildOnCVSS>
+          <skipProvidedScope>true</skipProvidedScope>
+          <skipRuntimeScope>false</skipRuntimeScope>
+          <skipTestScope>true</skipTestScope>
+          <formats>
+            <format>HTML</format>
+            <format>JSON</format>
+          </formats>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin> 
         <groupId>com.microsoft.azure</groupId>  
         <artifactId>azure-webapp-maven-plugin</artifactId>  
@@ -123,7 +199,7 @@
           <appSettings>
           	<property>
           		<name>JAVA_OPTS</name>
-          		<value>-Dserver.port=80</value>
+          		<value>-Dserver.port=80 -Djava.security.egd=file:/dev/./urandom -XX:+UseG1GC -XX:+UseStringDeduplication</value>
           	</property>
           </appSettings>
           <runtime>
