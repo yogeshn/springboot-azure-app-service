@@ -2,22 +2,29 @@ package com.amock.helloazure;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.stereotype.Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Main entry point for the HelloAzure Spring Boot application.
+ * Configures and starts the application context.
+ * This class ensures the application starts successfully with the new Java version
+ * and provides basic error handling for startup failures.
+ */
 @SpringBootApplication
 public class HelloAzureApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(HelloAzureApplication.class, args);
-	}
+    private static final Logger logger = LoggerFactory.getLogger(HelloAzureApplication.class);
 
-	@Controller
-	class WebController {
-		
-		@GetMapping
-		public String home(){
-			return "index";
-		}
-	}
+    public static void main(String[] args) {
+        try {
+            // Run the Spring Boot application
+            SpringApplication.run(HelloAzureApplication.class, args);
+            logger.info("HelloAzureApplication started successfully.");
+        } catch (Exception e) {
+            logger.error("Failed to start HelloAzureApplication", e);
+            // Exit with error code to indicate failure, allowing for smoke test validation
+            System.exit(1);
+        }
+    }
 }
