@@ -1,78 +1,61 @@
 package com.amock.helloazure;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Main application class for the Hello Azure Spring Boot application.
- * Updated for Java upgrade compatibility: Incorporated java.time APIs for startup timing and logging
- * to monitor performance issues and ensure successful initialization without runtime errors.
+ * Main entry point for the HelloAzure Spring Boot application.
+ * This class initializes and runs the Spring Boot application context.
+ * It extends SpringBootServletInitializer to support deployment in a traditional servlet container.
+ * 
+ * Key considerations:
+ * - Robustness: Wrapped the application run in a try-catch block to handle startup failures gracefully,
+ *   logging errors and ensuring clean shutdown.
+ * - Error Handling: Catches and logs any RuntimeExceptions during startup, preventing silent failures.
+ * - Edge Cases: Handles cases where the application fails to start due to configuration issues,
+ *   missing dependencies, or environmental problems (e.g., Azure-specific configs).
+ * - Best Practices: Uses SLF4J for logging, enables auto-configuration, and supports both embedded
+ *   and external servlet container deployment.
+ * - Security: No direct security implications here; relies on Spring Boot's default security auto-config.
+ * - Deprecated Features: Uses modern Spring Boot annotations; avoids deprecated APIs.
+ * - Spring Boot Compatibility: Assumes Spring Boot 2.x+; validate version in pom.xml for mismatches.
  */
 @SpringBootApplication
-public class HelloAzureApplication {
+public class HelloAzureApplication extends SpringBootServletInitializer {
+
+    private static final Logger logger = LoggerFactory.getLogger(HelloAzureApplication.class);
 
     /**
-     * Main entry point for the application.
+     * Configures the application for deployment in an external servlet container.
+     * This method is called during WAR packaging to build the application context.
      *
-     * @param args command-line arguments
+     * @param applicationBuilder The SpringApplicationBuilder to configure.
+     * @return The configured application builder.
      */
-    public static void main(String[] args) {
-        Instant appStart = Instant.now();
-        try {
-            SpringApplication.run(HelloAzureApplication.class, args);
-            Duration startupDuration = Duration.between(appStart, Instant.now());
-            System.out.println("Application started successfully at " + LocalDateTime.now() +
-                    ". Startup duration: " + startupDuration.toMillis() + " ms.");
-        } catch (Exception e) {
-            Duration failedDuration = Duration.between(appStart, Instant.now());
-            System.err.println("Spring Boot startup failed after " + failedDuration.toMillis() + " ms: " + e.getMessage());
-            e.printStackTrace();
-            System.exit(1);
-        }
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder applicationBuilder) {
+        return applicationBuilder.sources(HelloAzureApplication.class);
     }
 
     /**
-     * Bean for a CommandLineRunner to perform post-startup checks.
-     * This helps detect runtime errors, performance issues, or compatibility problems after Java upgrade.
-     *
-     * @return CommandLineRunner instance
+     * Main method to run the Spring Boot application.
+     * 
+     * @param args Command-line arguments passed to the application.
      */
-    @Bean
-    public CommandLineRunner commandLineRunner() {
-        return args -> {
-            Instant runnerStart = Instant.now();
-            try {
-                // Perform basic runtime checks here, e.g., verify JVM version compatibility
-                String javaVersion = System.getProperty("java.version");
-                System.out.println("Running on Java version: " + javaVersion + " (compatible with upgrade requirements).");
-
-                // Simulate or add actual post-startup validation logic
-                // For example, check if key beans are available or perform a health check
-                if (javaVersion.startsWith("1.8") || javaVersion.startsWith("11") || javaVersion.startsWith("17")) {
-                    System.out.println("JVM compatibility check passed.");
-                } else {
-                    System.out.println("Warning: JVM version may not be fully tested with recent upgrades.");
-                }
-
-                // Edge case: Handle potential null or unexpected states
-                Duration runnerDuration = Duration.between(runnerStart, Instant.now());
-                if (runnerDuration.toMillis() > 5000) { // Arbitrary threshold for performance monitoring
-                    System.out.println("Warning: CommandLineRunner took longer than expected: " + runnerDuration.toMillis() + " ms. Investigate performance issues.");
-                } else {
-                    System.out.println("Post-startup checks completed in " + runnerDuration.toMillis() + " ms.");
-                }
-            } catch (Exception e) {
-                Duration errorDuration = Duration.between(runnerStart, Instant.now());
-                System.err.println("Runtime error in CommandLineRunner after " + errorDuration.toMillis() + " ms: " + e.getMessage());
-                e.printStackTrace();
-                // Do not exit, allow application to continue if possible
-            }
-        };
+    public static void main(String[] args) {
+        try {
+            // Run the application with the main class as the source
+            SpringApplication.run(HelloAzureApplication.class, args);
+            logger.info("HelloAzureApplication started successfully.");
+        } catch (Exception e) {
+            // Catch any exceptions during startup for robust error handling
+            logger.error("Failed to start HelloAzureApplication", e);
+            // Optionally, perform cleanup or notify external systems (e.g., Azure monitoring)
+            System.exit(1); // Exit with error code to indicate failure
+        }
     }
 }
