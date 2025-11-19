@@ -1,135 +1,69 @@
 package com.amock.helloazure.model;
 
-import java.util.Objects;
+import java.io.Serializable;
 
 /**
- * Model class representing a name entity.
- * Updated to support Spring Boot 3.x and Java 17+ compatibility.
+ * A simple model class representing a name.
+ * This class is used in the HelloAzure application for handling name-related data.
  */
-public class MyName {
+public class MyName implements Serializable {
 
-    private String firstName;
-    private String lastName;
-    private String middleName;
+    private static final long serialVersionUID = 1L;
+
+    private String name;
 
     /**
-     * Default constructor required for serialization/deserialization.
+     * Default constructor.
      */
     public MyName() {
     }
 
     /**
-     * Constructor with required fields.
+     * Constructor with name parameter.
      *
-     * @param firstName the first name
-     * @param lastName  the last name
+     * @param name the name to set
      */
-    public MyName(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public MyName(String name) {
+        this.name = name;
     }
 
     /**
-     * Full constructor with all fields.
+     * Gets the name.
      *
-     * @param firstName  the first name
-     * @param lastName   the last name
-     * @param middleName the middle name
+     * @return the name
      */
-    public MyName(String firstName, String lastName, String middleName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.middleName = middleName;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Gets the first name.
+     * Sets the name.
      *
-     * @return the first name
+     * @param name the name to set
      */
-    public String getFirstName() {
-        return firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    /**
-     * Sets the first name.
-     *
-     * @param firstName the first name to set
-     */
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    /**
-     * Gets the last name.
-     *
-     * @return the last name
-     */
-    public String getLastName() {
-        return lastName;
-    }
-
-    /**
-     * Sets the last name.
-     *
-     * @param lastName the last name to set
-     */
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    /**
-     * Gets the middle name.
-     *
-     * @return the middle name
-     */
-    public String getMiddleName() {
-        return middleName;
-    }
-
-    /**
-     * Sets the middle name.
-     *
-     * @param middleName the middle name to set
-     */
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    /**
-     * Returns the full name as a formatted string.
-     * If middle name is present, it will be included between first and last name.
-     *
-     * @return formatted full name
-     */
-    public String getFullName() {
-        if (middleName != null && !middleName.isEmpty()) {
-            return firstName + " " + middleName + " " + lastName;
-        }
-        return firstName + " " + lastName;
+    @Override
+    public String toString() {
+        return "MyName{" +
+                "name='" + name + '\'' +
+                '}';
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         MyName myName = (MyName) o;
-        return Objects.equals(firstName, myName.firstName) &&
-                Objects.equals(lastName, myName.lastName) &&
-                Objects.equals(middleName, myName.middleName);
+
+        return name != null ? name.equals(myName.name) : myName.name == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, middleName);
-    }
-
-    @Override
-    public String toString() {
-        return "MyName{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                '}';
+        return name != null ? name.hashCode() : 0;
     }
 }
