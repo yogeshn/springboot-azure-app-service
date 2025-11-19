@@ -1,124 +1,97 @@
 package com.amock.helloazure.model;
 
-import java.util.Objects;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 /**
- * A simple model class representing a person's name.
- * This class has been refactored for modern Java practices:
- * - Uses immutable design where possible for thread-safety.
- * - Includes validation and error handling in constructors and methods.
- * - Replaces any potential anonymous classes with lambdas (none present originally).
- * - No deprecated APIs detected or used.
- * - Added null-safety checks and edge case handling.
+ * Model class representing a user's name, used in the Hello Azure application.
+ * Updated for Java upgrade compatibility: Added Bean Validation annotations for input safety.
+ * Ensures robustness by validating input at the model level to prevent invalid data propagation.
+ * Handles edge cases such as empty strings or excessively long names through annotations.
  */
 public class MyName {
-    private final String firstName;
-    private final String lastName;
+
+    @NotBlank(message = "Name cannot be blank")
+    @Size(min = 1, max = 50, message = "Name must be between 1 and 50 characters")
+    private String name;
 
     /**
-     * Constructs a MyName instance with validation.
-     *
-     * @param firstName the first name, must not be null or empty
-     * @param lastName  the last name, must not be null or empty
-     * @throws IllegalArgumentException if firstName or lastName is null or empty after trimming
+     * Default constructor for MyName.
+     * Allows for default initialization, useful for testing and deserialization.
      */
-    public MyName(String firstName, String lastName) {
-        if (firstName == null || firstName.trim().isEmpty()) {
-            throw new IllegalArgumentException("First name must not be null or empty");
+    public MyName() {
+        // Default constructor for flexibility in object creation
+    }
+
+    /**
+     * Constructor with name parameter.
+     * Initializes the name field directly, promoting immutability where possible.
+     *
+     * @param name the user's name to set
+     */
+    public MyName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Gets the name value.
+     *
+     * @return the name string
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name value.
+     * Includes null check for robustness, though validation will catch invalid values later.
+     *
+     * @param name the name to set
+     * @throws IllegalArgumentException if name is null (additional runtime safety)
+     */
+    public void setName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Name cannot be null");
         }
-        if (lastName == null || lastName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Last name must not be null or empty");
-        }
-        this.firstName = firstName.trim();
-        this.lastName = lastName.trim();
+        this.name = name;
     }
 
     /**
-     * Gets the first name.
+     * Overrides toString for better debugging and logging.
+     * Provides a clear representation of the object state.
      *
-     * @return the first name, never null
+     * @return string representation of MyName
      */
-    public String getFirstName() {
-        return firstName;
+    @Override
+    public String toString() {
+        return "MyName{" +
+                "name='" + name + '\'' +
+                '}';
     }
 
     /**
-     * Gets the last name.
+     * Overrides equals for proper object comparison.
+     * Ensures correct equality checks based on name field, handling nulls safely.
      *
-     * @return the last name, never null
+     * @param o the object to compare with
+     * @return true if objects are equal
      */
-    public String getLastName() {
-        return lastName;
-    }
-
-    /**
-     * Gets the full name by concatenating first and last name.
-     *
-     * @return the full name, e.g., "John Doe"
-     */
-    public String getFullName() {
-        return firstName + " " + lastName;
-    }
-
-    /**
-     * Validates if the name meets basic criteria (e.g., length).
-     * Edge case: checks for excessively long names to prevent potential issues.
-     *
-     * @return true if valid, false otherwise
-     */
-    public boolean isValid() {
-        try {
-            validateNameLength(firstName, "First name");
-            validateNameLength(lastName, "Last name");
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    private void validateNameLength(String name, String fieldName) {
-        if (name.length() > 100) { // Arbitrary max length for robustness
-            throw new IllegalArgumentException(fieldName + " too long: " + name.length());
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MyName myName = (MyName) o;
-        return firstName.equals(myName.firstName) && lastName.equals(myName.lastName);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstName, lastName);
-    }
-
-    @Override
-    public String toString() {
-        return "MyName{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                '}';
+        return name != null ? name.equals(myName.name) : myName.name == null;
     }
 
     /**
-     * Factory method to create MyName from a full name string.
-     * Handles edge cases like missing parts or extra spaces.
+     * Overrides hashCode for consistent hashing with equals.
+     * Uses name field for hash calculation, null-safe.
      *
-     * @param fullName the full name, e.g., "John Doe"
-     * @return a new MyName instance, or throws exception if invalid
-     * @throws IllegalArgumentException if fullName is invalid
+     * @return hash code integer
      */
-    public static MyName fromFullName(String fullName) {
-        if (fullName == null || fullName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Full name must not be null or empty");
-        }
-        String[] parts = fullName.trim().split("\\s+", 2);
-        if (parts.length < 2) {
-            throw new IllegalArgumentException("Full name must contain at least first and last name");
-        }
-        return new MyName(parts[0], parts[1]);
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
     }
 }
