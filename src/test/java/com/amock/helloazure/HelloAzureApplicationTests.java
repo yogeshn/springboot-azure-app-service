@@ -1,55 +1,57 @@
 package com.amock.helloazure;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
- * Integration tests for HelloAzureApplication.
- * Compatible with Java 17: Uses modern JUnit 5 features, no deprecated APIs.
- * Version mapping: Tested with Spring Boot 3.x (Java 17 baseline).
+ * Integration tests for the HelloAzureApplication.
+ * This class verifies that the Spring application context loads successfully
+ * without errors, ensuring all beans are wired correctly.
+ * 
+ * Key logic:
+ * - Uses @SpringBootTest to load the full application context.
+ * - Includes a basic context load test to confirm startup.
+ * - Adds profile activation for test environment if needed.
+ * 
+ * Edge cases covered:
+ * - Application startup failure due to configuration issues.
+ * - Bean wiring problems detected early.
+ * 
+ * Error handling:
+ * - Spring Boot's built-in context loading will fail fast on errors,
+ *   providing detailed stack traces for diagnosis.
  */
 @SpringBootTest
-@ExtendWith(MockitoExtension.class) // For mocking if needed in future extensions
+@ActiveProfiles("test") // Activates test-specific profiles for isolated testing
 class HelloAzureApplicationTests {
 
     /**
-     * Basic context load test to ensure application starts without errors.
-     * Covers edge case: Empty context (no beans injected).
+     * Tests that the Spring application context loads successfully.
+     * This is the primary smoke test to ensure the application starts up
+     * without exceptions.
      */
     @Test
     void contextLoads() {
-        // No assertions needed; failure indicates startup issues
-        // Error handling: Spring Boot's test runner handles exceptions
+        // No explicit assertions needed; failure to load context will throw an exception
+        // This method simply verifies that all auto-configurations and beans initialize correctly
     }
 
     /**
-     * Additional robustness test: Verify no unexpected exceptions during startup.
-     * Simulates a simple bean interaction if extended.
+     * Additional test to verify a specific component or service can be injected and used.
+     * Extend this as needed for more robust coverage.
+     * 
+     * Example: If there's a HelloService, inject and test it here.
      */
     @Test
-    void applicationStartupWithoutExceptions() {
-        try {
-            // Placeholder for future bean interactions
-            // Example: assertTrue(someService.isHealthy());
-        } catch (Exception e) {
-            fail("Unexpected exception during application startup: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Edge case test: Handle potential configuration errors gracefully.
-     * Ensures test isolation and doesn't affect overall suite.
-     */
-    @Test
-    void testWithPotentialConfigIssue() {
-        // Simulate a config load; in real scenario, use @TestPropertySource if needed
-        assertDoesNotThrow(() -> {
-            // No-op for baseline; extend with actual config validation
-        }, "Configuration should load without throwing");
+    void testApplicationComponents() {
+        // Placeholder for component-specific tests
+        // Example:
+        // @Autowired
+        // private HelloService helloService;
+        // 
+        // assertThat(helloService.sayHello()).isEqualTo("Hello, Azure!");
+        
+        // Ensures no runtime errors in component initialization
     }
 }

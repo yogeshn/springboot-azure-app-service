@@ -1,23 +1,49 @@
 package com.amock.helloazure.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 
-public class MyName {
-    @JsonProperty("name")
+/**
+ * Simple model class representing a name.
+ * This class holds a single string field for the name and provides
+ * getter and setter methods. It implements Serializable for potential
+ * serialization needs in the application.
+ */
+public class MyName implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private String name;
 
+    /**
+     * Default constructor.
+     */
     public MyName() {
-        // Default constructor for JSON deserialization
+        // No-op for default initialization
     }
 
+    /**
+     * Constructor with name initialization.
+     *
+     * @param name the name to set
+     */
     public MyName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets the name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name.
+     *
+     * @param name the name to set
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -29,19 +55,16 @@ public class MyName {
                 '}';
     }
 
-    // Equals and hashCode for consistency in tests
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         MyName myName = (MyName) o;
-
-        return name != null ? name.equals(myName.name) : myName.name == null;
+        return java.util.Objects.equals(name, myName.name);
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        return java.util.Objects.hash(name);
     }
 }
