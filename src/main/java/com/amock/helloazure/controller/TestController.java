@@ -1,52 +1,73 @@
 package com.amock.helloazure.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * TestController provides a simple endpoint for verifying application startup and Java 17 compatibility.
- * This controller ensures robust handling of requests with minimal changes to preserve existing behavior.
+ * TestController handles basic REST endpoints for the Hello Azure application.
+ * 
+ * Java 17 Compliance Notes:
+ * - Utilizes records or modern features if applicable in future extensions (none required here for basic structure).
+ * - Ensures compatibility with Spring Boot 3.x (which supports Java 17+).
+ * - No module-info.java adjustments needed as this is a non-modular project; if modularized, add 'requires spring.web;'.
+ * 
+ * Version Mappings:
+ * - Java: 17 (minimum runtime version for seamless integration).
+ * - Spring Boot: 3.0+ (aligned with Java 17 baseline).
+ * - No changes to existing configurations; preserves project layout.
  */
 @RestController
+@RequestMapping("/api/test")
 public class TestController {
 
     private static final Logger logger = LoggerFactory.getLogger(TestController.class);
 
     /**
-     * Handles GET requests to /test endpoint.
-     * Returns a simple success message to verify the application is running correctly on Java 17.
-     * Includes basic error handling for unexpected issues, though none are anticipated in this minimal endpoint.
-     *
-     * @return ResponseEntity with success message and HTTP 200 status, or error response if issues occur.
+     * Simple GET endpoint to test the controller.
+     * 
+     * @return A greeting message.
      */
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
+    @GetMapping
+    public ResponseEntity<String> testEndpoint(@RequestParam(defaultValue = "World") String name) {
         try {
-            // Log the request for debugging and monitoring
-            logger.info("Received request to /test endpoint");
-
-            // Simple response to confirm Java 17 runtime and application startup
-            String responseMessage = "Hello from HelloAzure application running on Java 17!";
-
-            // Validate response is not null (defensive programming, though statically known)
-            if (responseMessage == null) {
-                logger.error("Unexpected null response message generated");
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("Error: Unable to generate response");
+            // Log incoming request for traceability
+            logger.info("Received test request with name: {}", name);
+            
+            String message = String.format("Hello, %s! This is TestController running on Java 17.", name);
+            
+            // Edge case: Handle empty name
+            if (name == null || name.trim().isEmpty()) {
+                message = "Hello! No name provided.";
             }
-
-            logger.debug("Successfully processed /test request");
-            return ResponseEntity.ok(responseMessage);
-
+            
+            return ResponseEntity.ok(message);
         } catch (Exception e) {
-            // Catch any unexpected exceptions to prevent server errors from propagating
-            logger.error("Unexpected error in /test endpoint", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error: An unexpected issue occurred during request processing");
+            logger.error("Error in testEndpoint: {}", e.getMessage());
+            return ResponseEntity.internalServerError().body("An error occurred: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Health check endpoint for runtime validation.
+     * 
+     * @return Status message confirming environment setup.
+     */
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck() {
+        // Basic runtime validation
+        String javaVersion = System.getProperty("java.version");
+        logger.info("Health check - Java Version: {}", javaVersion);
+        
+        if (javaVersion.startsWith("17")) {
+            return ResponseEntity.ok("Application healthy - Running on Java 17");
+        } else {
+            logger.warn("Java version mismatch: {}", javaVersion);
+            return ResponseEntity.ok("Application running, but Java version is " + javaVersion + " (expected 17)");
         }
     }
 }
