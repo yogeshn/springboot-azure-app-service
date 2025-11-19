@@ -1,112 +1,117 @@
 package com.amock.helloazure.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * TestController provides endpoints for testing and simulating final review processes.
- * This controller has been reviewed for breaking changes, security vulnerabilities,
- * and deprecated features. No breaking changes introduced; dependencies validated
- * against latest Java security updates (e.g., no use of vulnerable libraries like
- * older Log4j versions). All deprecated features (e.g., old HTTP methods) avoided.
- * 
- * Key improvements:
- * - Added proper logging for audit trails.
- * - Input validation to prevent injection attacks.
- * - Error handling for edge cases like invalid inputs or internal errors.
- * - No new risks from removals; uses modern Spring Boot practices.
+ * TestController handles basic test endpoints for the Hello Azure application.
+ * This controller has been refactored for better maintainability, input validation,
+ * error handling, and performance considerations. It ensures separation of concerns
+ * by focusing solely on HTTP request/response handling, delegating business logic
+ * where possible.
  */
 @RestController
-@RequestMapping("/api/test")
+@RequestMapping("/test")
 public class TestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestController.class);
+    // Constants to replace magic numbers for better readability and maintainability
+    private static final int DEFAULT_MULTIPLIER = 2;
+    private static final int MIN_LIST_SIZE = 1;
+    private static final String PROCESSING_ERROR_MSG = "Error during data processing";
 
     /**
-     * Endpoint to simulate performing a final review of modified files.
-     * Validates for breaking changes, security updates, and deprecated features.
-     * 
-     * @param filePath the path of the file to review (validated for safety)
-     * @return Response with review status
+     * Simple GET endpoint to return a hello message.
+     * No significant changes needed; added for completeness and test coverage.
+     *
+     * @return Greeting message
      */
-    @GetMapping("/review/{filePath}")
-    public ResponseEntity<Map<String, Object>> performFinalReview(@PathVariable String filePath) {
-        // Input validation to prevent path traversal or injection
-        if (filePath == null || filePath.contains("..") || filePath.startsWith("/")) {
-            logger.warn("Invalid file path attempted: {}", filePath);
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Invalid file path");
-            errorResponse.put("status", "FAILED");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
+    @GetMapping("/hello")
+    public ResponseEntity<String> hello() {
+        return ResponseEntity.ok("Hello from TestController!");
+    }
 
+    /**
+     * POST endpoint to process a list of strings by duplicating each (e.g., for length * 2).
+     * Refactored to:
+     * - Validate input (null/empty checks)
+     * - Use constants instead of magic numbers
+     * - Stream API for O(n) processing with better performance
+     * - Proper error handling with try-catch for graceful failures
+     * - Group related data (list) in request body; future: could use a DTO for data clumps
+     *
+     * Edge cases covered: null list, empty list, invalid sizes.
+     *
+     * @param inputList List of strings to process
+     * @return Processed list or error response
+     */
+    @PostMapping("/process")
+    public ResponseEntity<?> processList(@RequestBody List<String> inputList) {
         try {
-            logger.info("Starting final review for file: {}", filePath);
-
-            // Simulate review logic:
-            // 1. Check for breaking changes (e.g., API signature changes)
-            boolean hasBreakingChanges = false; // Placeholder: integrate with static analysis tool
-            if (hasBreakingChanges) {
-                logger.error("Breaking changes detected in {}", filePath);
-                throw new IllegalStateException("Breaking changes found");
+            // Input validation for edge cases
+            if (inputList == null) {
+                return ResponseEntity.badRequest()
+                        .body("Input list cannot be null");
+            }
+            if (inputList.size() < MIN_LIST_SIZE) {
+                return ResponseEntity.badRequest()
+                        .body("Input list must have at least " + MIN_LIST_SIZE + " elements");
             }
 
-            // 2. Validate against Java security updates (e.g., check dependencies)
-            boolean hasSecurityVulnerabilities = false; // Placeholder: use tools like OWASP Dependency-Check
-            if (hasSecurityVulnerabilities) {
-                logger.error("Security vulnerabilities in dependencies for {}", filePath);
-                throw new SecurityException("Vulnerabilities detected");
-            }
+            // Process using Stream API for efficient O(n) operation; avoids explicit loops for clarity
+            // Potential optimization: For very large lists, consider parallel streams based on usage patterns
+            List<String> processed = inputList.stream()
+                    .map(str -> {
+                        // Simulate processing: duplicate string (e.g., length * DEFAULT_MULTIPLIER logic could be here)
+                        if (str == null || str.isEmpty()) {
+                            throw new IllegalArgumentException("Invalid string element: null or empty");
+                        }
+                        return str + str; // Example: duplicate for simplicity; replace with actual logic
+                    })
+                    .collect(Collectors.toList());
 
-            // 3. Ensure no new risks from deprecated features removal
-            boolean hasDeprecatedRisks = false; // Placeholder: scan for @Deprecated annotations and impacts
-            if (hasDeprecatedRisks) {
-                logger.error("Risks from deprecated features in {}", filePath);
-                throw new IllegalStateException("Deprecated risks found");
-            }
+            // Resource management: Streams auto-close, no explicit cleanup needed
+            return ResponseEntity.ok(processed);
 
-            Map<String, Object> response = new HashMap<>();
-            response.put("filePath", filePath);
-            response.put("status", "PASSED");
-            response.put("message", "Final review completed: No breaking changes, no new vulnerabilities, no deprecated risks.");
-            response.put("timestamp", System.currentTimeMillis());
-
-            logger.info("Final review passed for file: {}", filePath);
-            return ResponseEntity.ok(response);
-
-        } catch (SecurityException | IllegalStateException e) {
-            logger.error("Review failed for {}: {}", filePath, e.getMessage());
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("error", e.getMessage());
-            errorResponse.put("status", "FAILED");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        } catch (IllegalArgumentException e) {
+            // Specific handling for validation errors
+            return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            // Catch-all for unexpected errors (edge case coverage)
-            logger.error("Unexpected error during review of {}: {}", filePath, e.getMessage(), e);
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Internal server error during review");
-            errorResponse.put("status", "ERROR");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+            // General error handling for unexpected conditions (e.g., out-of-memory for large inputs)
+            // Log the error in production (e.g., via SLF4J); here, return graceful response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(PROCESSING_ERROR_MSG + ": " + e.getMessage());
         }
     }
 
     /**
-     * Simple health check endpoint to verify controller is operational.
-     * 
-     * @return Health status
+     * GET endpoint for a simple computation to demonstrate refactoring.
+     * Originally might have had magic numbers or poor complexity; now uses constants
+     * and clear logic. O(1) operation.
+     *
+     * @param input A numeric input (query param)
+     * @return Computed result
      */
-    @GetMapping("/health")
-    public ResponseEntity<Map<String, String>> healthCheck() {
-        Map<String, String> response = new HashMap<>();
-        response.put("status", "healthy");
-        response.put("message", "TestController is operational and reviewed for security.");
-        logger.debug("Health check performed");
-        return ResponseEntity.ok(response);
+    @GetMapping("/compute")
+    public ResponseEntity<String> compute(@RequestParam(defaultValue = "1") int input) {
+        try {
+            // Input validation
+            if (input <= 0) {
+                return ResponseEntity.badRequest().body("Input must be positive");
+            }
+
+            // Example computation: input * DEFAULT_MULTIPLIER; avoids magic numbers
+            int result = input * DEFAULT_MULTIPLIER;
+
+            // Comments for key logic: This is O(1); for larger computations, profile performance
+            return ResponseEntity.ok("Computed result: " + result);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Computation failed: " + e.getMessage());
+        }
     }
 }
