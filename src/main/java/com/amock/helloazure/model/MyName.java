@@ -3,10 +3,9 @@ package com.amock.helloazure.model;
 import java.io.Serializable;
 
 /**
- * Simple model class representing a name.
- * This class holds a single string field for the name and provides
- * getter and setter methods. It implements Serializable for potential
- * serialization needs in the application.
+ * Simple model class representing a name entity.
+ * This class is designed to be serializable for potential use in distributed environments.
+ * No deprecated APIs or sun.* packages are used, ensuring compatibility with Java 11 and later.
  */
 public class MyName implements Serializable {
 
@@ -15,10 +14,9 @@ public class MyName implements Serializable {
     private String name;
 
     /**
-     * Default constructor.
+     * Default no-arg constructor for frameworks like Jackson or JPA.
      */
     public MyName() {
-        // No-op for default initialization
     }
 
     /**
@@ -59,12 +57,14 @@ public class MyName implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         MyName myName = (MyName) o;
-        return java.util.Objects.equals(name, myName.name);
+
+        return name != null ? name.equals(myName.name) : myName.name == null;
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(name);
+        return name != null ? name.hashCode() : 0;
     }
 }
