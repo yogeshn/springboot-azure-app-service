@@ -3,106 +3,88 @@ package com.amock.helloazure.model;
 import java.util.Objects;
 
 /**
- * Model class representing a person's name.
- * This class holds first and last name information.
- * Compatible with Java 17, using standard POJO structure with null-safety checks.
+ * Model class representing a user's name.
+ * This class holds the name value and provides basic validation to ensure
+ * the name is not null or empty. It preserves the original structure
+ * while adding robustness for error handling and edge cases like null inputs.
  */
 public class MyName {
 
-    private String firstName;
-    private String lastName;
+    private String name;
 
     /**
-     * Default constructor for MyName.
-     * Initializes with empty strings to avoid null values.
-     */
-    public MyName() {
-        this.firstName = "";
-        this.lastName = "";
-    }
-
-    /**
-     * Constructor with name parameters.
-     * Validates inputs to prevent null or empty names for better data integrity.
+     * Constructor for MyName.
+     * Validates that the provided name is not null or empty to prevent invalid states.
      *
-     * @param firstName the first name
-     * @param lastName  the last name
-     * @throws IllegalArgumentException if either name is null or empty after trimming
+     * @param name the name to set, must not be null or empty
+     * @throws IllegalArgumentException if name is null or empty
      */
-    public MyName(String firstName, String lastName) {
-        if (firstName == null || firstName.trim().isEmpty()) {
-            throw new IllegalArgumentException("First name cannot be null or empty");
+    public MyName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
         }
-        if (lastName == null || lastName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Last name cannot be null or empty");
-        }
-        this.firstName = firstName.trim();
-        this.lastName = lastName.trim();
-    }
-
-    // Getter for firstName
-    public String getFirstName() {
-        return firstName;
-    }
-
-    // Setter for firstName with validation
-    public void setFirstName(String firstName) {
-        if (firstName == null || firstName.trim().isEmpty()) {
-            throw new IllegalArgumentException("First name cannot be null or empty");
-        }
-        this.firstName = firstName.trim();
-    }
-
-    // Getter for lastName
-    public String getLastName() {
-        return lastName;
-    }
-
-    // Setter for lastName with validation
-    public void setLastName(String lastName) {
-        if (lastName == null || lastName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Last name cannot be null or empty");
-        }
-        this.lastName = lastName.trim();
+        this.name = name.trim();
     }
 
     /**
-     * Returns the full name as a concatenated string.
+     * Gets the name value.
      *
-     * @return full name (first + last)
+     * @return the name, guaranteed to be non-null and non-empty
      */
-    public String getFullName() {
-        return firstName + " " + lastName;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Checks if the name is considered empty (both fields are empty).
+     * Sets the name value with validation.
+     * This method handles edge cases by trimming whitespace and rejecting invalid inputs.
      *
-     * @return true if both names are empty, false otherwise
+     * @param name the name to set, must not be null or empty after trimming
+     * @throws IllegalArgumentException if name is null or empty after trimming
      */
-    public boolean isEmpty() {
-        return firstName.trim().isEmpty() && lastName.trim().isEmpty();
+    public void setName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be null or empty");
+        }
+        this.name = name.trim();
     }
 
+    /**
+     * Checks if this MyName is equal to another object.
+     * Handles null checks and type safety for robustness.
+     *
+     * @param o the object to compare with
+     * @return true if equal, false otherwise
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MyName myName = (MyName) o;
-        return Objects.equals(firstName, myName.firstName) &&
-               Objects.equals(lastName, myName.lastName);
+        return Objects.equals(name, myName.name);
     }
 
+    /**
+     * Generates a hash code for this MyName.
+     * Ensures consistency with equals method.
+     *
+     * @return the hash code
+     */
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName);
+        return Objects.hash(name);
     }
 
+    /**
+     * Returns a string representation of this MyName.
+     * Useful for logging or debugging, handles null safety internally.
+     *
+     * @return string representation
+     */
     @Override
     public String toString() {
         return "MyName{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
+                "name='" + name + '\'' +
                 '}';
     }
 }
