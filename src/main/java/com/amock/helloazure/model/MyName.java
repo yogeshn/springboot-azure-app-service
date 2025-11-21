@@ -4,42 +4,51 @@ import java.util.Objects;
 
 /**
  * Model class representing a user's name.
- * This class holds the name value and provides basic validation to ensure
- * the name is not null or empty. It preserves the original structure
- * while adding robustness for error handling and edge cases like null inputs.
+ * This class holds the name value and provides basic validation and accessors.
+ * Ensures robustness by validating non-empty names and handling null cases.
  */
 public class MyName {
 
     private String name;
 
     /**
-     * Constructor for MyName.
-     * Validates that the provided name is not null or empty to prevent invalid states.
+     * Default constructor for MyName.
+     * Initializes with null name; validation occurs on set or get.
+     */
+    public MyName() {
+        this.name = null;
+    }
+
+    /**
+     * Constructor with name initialization.
+     * Validates the provided name to ensure it is not null or empty.
      *
-     * @param name the name to set, must not be null or empty
-     * @throws IllegalArgumentException if name is null or empty
+     * @param name the name to set
+     * @throws IllegalArgumentException if name is null or empty after trimming
      */
     public MyName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be null or empty");
-        }
-        this.name = name.trim();
+        setName(name); // Delegates to setter for validation
     }
 
     /**
      * Gets the name value.
+     * Returns the trimmed name if valid; otherwise, throws an exception for robustness.
      *
-     * @return the name, guaranteed to be non-null and non-empty
+     * @return the name
+     * @throws IllegalStateException if name is null or empty
      */
     public String getName() {
-        return name;
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalStateException("Name cannot be null or empty");
+        }
+        return name.trim();
     }
 
     /**
      * Sets the name value with validation.
-     * This method handles edge cases by trimming whitespace and rejecting invalid inputs.
+     * Trims the input and checks for null/empty to prevent invalid states.
      *
-     * @param name the name to set, must not be null or empty after trimming
+     * @param name the name to set
      * @throws IllegalArgumentException if name is null or empty after trimming
      */
     public void setName(String name) {
@@ -49,13 +58,6 @@ public class MyName {
         this.name = name.trim();
     }
 
-    /**
-     * Checks if this MyName is equal to another object.
-     * Handles null checks and type safety for robustness.
-     *
-     * @param o the object to compare with
-     * @return true if equal, false otherwise
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,23 +66,11 @@ public class MyName {
         return Objects.equals(name, myName.name);
     }
 
-    /**
-     * Generates a hash code for this MyName.
-     * Ensures consistency with equals method.
-     *
-     * @return the hash code
-     */
     @Override
     public int hashCode() {
         return Objects.hash(name);
     }
 
-    /**
-     * Returns a string representation of this MyName.
-     * Useful for logging or debugging, handles null safety internally.
-     *
-     * @return string representation
-     */
     @Override
     public String toString() {
         return "MyName{" +
