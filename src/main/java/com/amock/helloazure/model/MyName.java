@@ -1,59 +1,87 @@
 package com.amock.helloazure.model;
 
-import java.io.Serializable;
+import java.util.Objects;
 
 /**
- * Simple model class representing a user's name.
- * Used for data transfer in the application, such as in REST responses or requests.
- * This class ensures basic validation and serialization for JSON handling in Spring Boot.
+ * Model class representing a person's name.
+ * This class holds first and last name information.
+ * Compatible with Java 17, using standard POJO structure with null-safety checks.
  */
-public class MyName implements Serializable {
+public class MyName {
 
-    private static final long serialVersionUID = 1L;
-
-    private String name;
+    private String firstName;
+    private String lastName;
 
     /**
-     * Default no-arg constructor for JSON deserialization.
+     * Default constructor for MyName.
+     * Initializes with empty strings to avoid null values.
      */
     public MyName() {
-        // No-op for default instantiation
+        this.firstName = "";
+        this.lastName = "";
     }
 
     /**
-     * Constructor with name initialization.
-     * @param name The user's name to set.
+     * Constructor with name parameters.
+     * Validates inputs to prevent null or empty names for better data integrity.
+     *
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @throws IllegalArgumentException if either name is null or empty after trimming
      */
-    public MyName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Gets the user's name.
-     * @return The name as a String.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the user's name.
-     * Validates that the name is not null or empty to prevent invalid states.
-     * @param name The name to set.
-     * @throws IllegalArgumentException if name is null or empty.
-     */
-    public void setName(String name) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be null or empty");
+    public MyName(String firstName, String lastName) {
+        if (firstName == null || firstName.trim().isEmpty()) {
+            throw new IllegalArgumentException("First name cannot be null or empty");
         }
-        this.name = name.trim();
+        if (lastName == null || lastName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Last name cannot be null or empty");
+        }
+        this.firstName = firstName.trim();
+        this.lastName = lastName.trim();
     }
 
-    @Override
-    public String toString() {
-        return "MyName{" +
-                "name='" + name + '\'' +
-                '}';
+    // Getter for firstName
+    public String getFirstName() {
+        return firstName;
+    }
+
+    // Setter for firstName with validation
+    public void setFirstName(String firstName) {
+        if (firstName == null || firstName.trim().isEmpty()) {
+            throw new IllegalArgumentException("First name cannot be null or empty");
+        }
+        this.firstName = firstName.trim();
+    }
+
+    // Getter for lastName
+    public String getLastName() {
+        return lastName;
+    }
+
+    // Setter for lastName with validation
+    public void setLastName(String lastName) {
+        if (lastName == null || lastName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Last name cannot be null or empty");
+        }
+        this.lastName = lastName.trim();
+    }
+
+    /**
+     * Returns the full name as a concatenated string.
+     *
+     * @return full name (first + last)
+     */
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
+    /**
+     * Checks if the name is considered empty (both fields are empty).
+     *
+     * @return true if both names are empty, false otherwise
+     */
+    public boolean isEmpty() {
+        return firstName.trim().isEmpty() && lastName.trim().isEmpty();
     }
 
     @Override
@@ -61,11 +89,20 @@ public class MyName implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MyName myName = (MyName) o;
-        return java.util.Objects.equals(name, myName.name);
+        return Objects.equals(firstName, myName.firstName) &&
+               Objects.equals(lastName, myName.lastName);
     }
 
     @Override
     public int hashCode() {
-        return java.util.Objects.hash(name);
+        return Objects.hash(firstName, lastName);
+    }
+
+    @Override
+    public String toString() {
+        return "MyName{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                '}';
     }
 }
