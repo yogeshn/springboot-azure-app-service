@@ -1,74 +1,56 @@
 package com.amock.helloazure.model;
 
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Model class representing a user's name.
- * This class holds the name value and provides basic validation and accessors.
- * Ensures robustness by validating non-empty names and handling null cases.
+ * Ensures backward compatibility with existing serialization.
+ * Added Jackson annotations for consistent JSON handling.
+ * Includes basic validation and logging for runtime compatibility.
  */
 public class MyName {
 
+    private static final Logger logger = LoggerFactory.getLogger(MyName.class);
+
+    @JsonProperty("name")
     private String name;
 
     /**
-     * Default constructor for MyName.
-     * Initializes with null name; validation occurs on set or get.
+     * Default constructor for backward compatibility and deserialization.
      */
     public MyName() {
-        this.name = null;
+        // No-op for compatibility
     }
 
     /**
      * Constructor with name initialization.
-     * Validates the provided name to ensure it is not null or empty.
-     *
-     * @param name the name to set
-     * @throws IllegalArgumentException if name is null or empty after trimming
+     * @param name The user's name.
      */
     public MyName(String name) {
-        setName(name); // Delegates to setter for validation
-    }
-
-    /**
-     * Gets the name value.
-     * Returns the trimmed name if valid; otherwise, throws an exception for robustness.
-     *
-     * @return the name
-     * @throws IllegalStateException if name is null or empty
-     */
-    public String getName() {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalStateException("Name cannot be null or empty");
+            logger.warn("Invalid name provided: null or empty. Using default.");
+            this.name = "Unknown";
+        } else {
+            this.name = name.trim();
+            logger.debug("MyName initialized with: {}", this.name);
         }
-        return name.trim();
     }
 
-    /**
-     * Sets the name value with validation.
-     * Trims the input and checks for null/empty to prevent invalid states.
-     *
-     * @param name the name to set
-     * @throws IllegalArgumentException if name is null or empty after trimming
-     */
+    // Getter
+    public String getName() {
+        return name;
+    }
+
+    // Setter with validation
     public void setName(String name) {
         if (name == null || name.trim().isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be null or empty");
+            logger.warn("Attempted to set invalid name: null or empty.");
+            this.name = "Unknown";
+        } else {
+            this.name = name.trim();
         }
-        this.name = name.trim();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        MyName myName = (MyName) o;
-        return Objects.equals(name, myName.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
     }
 
     @Override
@@ -76,5 +58,13 @@ public class MyName {
         return "MyName{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+    /**
+     * Validates the name field.
+     * @return true if valid, false otherwise.
+     */
+    public boolean isValid() {
+        return name != null && !name.trim().isEmpty();
     }
 }

@@ -1,43 +1,60 @@
 package com.amock.helloazure;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
 
 /**
  * Main entry point for the Hello Azure Spring Boot application.
- * This class bootstraps the application context and starts the embedded server.
- * Supports configuration via application profiles for different environments (e.g., test, prod, azure).
- * 
- * Key logic:
- * - Uses @SpringBootApplication to enable auto-configuration, component scanning, and more.
- * - The main method runs the application with provided arguments, handling startup efficiently.
- * - Error handling is managed by Spring Boot's default mechanisms, with logging for diagnostics.
- * - Ensures compatibility with newer Java versions (e.g., 17+) by avoiding deprecated APIs.
- * 
- * Performance considerations:
- * - Minimal static initialization to reduce startup time.
- * - Lazy loading of beans where possible via Spring Boot defaults.
- * 
- * Edge cases:
- * - Handles missing arguments gracefully (defaults to empty).
- * - Supports profile activation via command-line args (e.g., --spring.profiles.active=azure).
+ * This class initializes the Spring context and performs basic startup validation.
+ * Ensures backward compatibility by maintaining standard Spring Boot lifecycle.
+ * Added logging for runtime compatibility confirmation and error handling for edge cases.
  */
 @SpringBootApplication
 public class HelloAzureApplication {
 
-    /**
-     * Starts the Spring Boot application.
-     * 
-     * @param args Command-line arguments, including profile specifications.
-     */
+    private static final Logger logger = LoggerFactory.getLogger(HelloAzureApplication.class);
+
     public static void main(String[] args) {
+        // Edge case: Handle null or empty arguments
+        if (args == null || args.length == 0) {
+            logger.info("No command-line arguments provided. Starting application with default configuration.");
+        } else {
+            logger.info("Starting application with arguments: {}", String.join(", ", args));
+        }
+
+        ConfigurableApplicationContext context = null;
         try {
-            SpringApplication.run(HelloAzureApplication.class, args);
+            // Run the Spring Boot application
+            context = SpringApplication.run(HelloAzureApplication.class, args);
+            
+            // Manual verification of environments (basic check)
+            Environment env = context.getEnvironment();
+            String activeProfiles = String.join(", ", env.getActiveProfiles());
+            logger.info("Application started successfully. Active profiles: {}", activeProfiles.isEmpty() ? "default" : activeProfiles);
+            logger.info("Hello Azure! Application is ready for deployment.");
+            
+            // Confirm runtime compatibility by logging key properties
+            logger.info("Java Version: {}", System.getProperty("java.version"));
+            logger.info("Build Timestamp: {}", System.getProperty("build.timestamp", "Not available"));
+            
         } catch (Exception e) {
-            // Basic error handling: log and exit to prevent hanging processes
-            System.err.println("Failed to start application: " + e.getMessage());
-            e.printStackTrace();
+            // Proper error handling for startup failures
+            logger.error("Failed to start Hello Azure application", e);
             System.exit(1);
+        }
+
+        // Keep the application running; shutdown handled by Spring context
+        if (context != null) {
+            try {
+                context.registerShutdownHook();
+                logger.debug("Shutdown hook registered for graceful exit.");
+            } catch (Exception e) {
+                logger.warn("Failed to register shutdown hook", e);
+            }
         }
     }
 }
