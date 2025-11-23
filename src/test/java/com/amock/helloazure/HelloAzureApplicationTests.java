@@ -1,16 +1,15 @@
 package com.amock.helloazure;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-public class HelloAzureApplicationTests {
+class HelloAzureApplicationTests {
 
-	@Test
-	public void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+        // Test to verify that the Spring application context loads successfully
+        // No changes needed as there are no javax.* imports or related API calls in this file
+    }
 
 }
