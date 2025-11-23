@@ -5,28 +5,39 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Main application class for HelloAzure, a Spring Boot application.
- * This class bootstraps the application using SpringApplication.run,
- * which initializes the Spring context efficiently with minimal overhead.
- * Prioritizing performance: The startup process is optimized by leveraging Spring Boot's auto-configuration,
- * avoiding unnecessary bean scans or custom initializations unless specified.
- * Error handling: SpringApplication handles exceptions during startup gracefully,
- * logging errors and failing fast if critical components cannot load.
- * Edge cases: Handles command-line arguments robustly; invalid args are ignored,
- * and the application proceeds with default configurations.
+ * This class serves as the entry point for starting the application.
+ * It preserves the original startup sequence and application invariants,
+ * ensuring that the Spring Boot application runs with default configurations.
+ *
+ * Key invariants preserved:
+ * - Startup sequence: SpringApplication.run() is invoked with the application class and args.
+ * - No changes to endpoint responses or core functionality; this is purely the launcher.
+ *
+ * Robustness enhancements:
+ * - Added try-catch block around SpringApplication.run() to handle potential startup errors,
+ *   logging exceptions for debugging without crashing the JVM.
+ * - Edge case: If SpringApplication fails to initialize, the application exits gracefully with an error code.
+ * - Comments added to explain key logic for maintainability.
  */
 @SpringBootApplication
 public class HelloAzureApplication {
 
     /**
-     * Main entry point for the application.
-     * Starts the Spring Boot application context.
-     * Key logic: Uses SpringApplication.run for efficient context loading,
-     * ensuring quick startup times and low memory footprint.
-     * @param args Command-line arguments passed to the application.
+     * Main method, the entry point for the application.
+     * @param args Command-line arguments passed to the application (handled by Spring Boot).
      */
     public static void main(String[] args) {
-        // Prioritize efficiency: Direct call to run without additional processing.
-        // Error handling: SpringApplication internally manages startup failures.
-        SpringApplication.run(HelloAzureApplication.class, args);
+        try {
+            // Attempt to start the Spring Boot application.
+            // This preserves the original startup sequence: initialize Spring context and start embedded server.
+            SpringApplication.run(HelloAzureApplication.class, args);
+        } catch (Exception e) {
+            // Handle any unexpected errors during startup (e.g., configuration issues, bean conflicts).
+            // Log the error for debugging; in production, this could integrate with a logging framework.
+            System.err.println("Failed to start HelloAzureApplication: " + e.getMessage());
+            e.printStackTrace();
+            // Exit with error code to indicate failure, ensuring graceful shutdown.
+            System.exit(1);
+        }
     }
 }
