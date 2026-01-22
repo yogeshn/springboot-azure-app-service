@@ -1,5 +1,8 @@
 package com.amock.helloazure.model;
 
+/**
+ * This class requires Java 17 as the minimum runtime version.
+ */
 public class MyName {
 
 	private String firstName;
