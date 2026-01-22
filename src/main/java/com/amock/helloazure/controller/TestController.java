@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.amock.helloazure.model.MyName;
 
+// This class requires Java 17 as the minimum runtime version.
+
 @RestController
 @RequestMapping("/")
 public class TestController {
