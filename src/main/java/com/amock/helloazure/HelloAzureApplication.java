@@ -13,7 +13,7 @@ public class HelloAzureApplication {
 	}
 
 	@Controller
-	class WebController {
+	static class WebController {
 		
 		@GetMapping
 		public String home(){
