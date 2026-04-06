@@ -1,2 +1,6 @@
 # springboot-azure-app-service
-Sample Hello world springboot application to deploy on Azure App Service
+
+
+**Requires: Java JDK 21+, Maven 3.6.3+, Spring Boot 3.3.4**
+
+Sample Hello world Spring Boot application to deploy on Azure App Service
