@@ -1,2 +1,2 @@
 # springboot-azure-app-service
-Sample Hello world springboot application to deploy on Azure App Service
+Sample Hello world springboot application to deploy on Azure App Service\n\n## Prerequisites\n\n- **Java 21** (minimum supported JDK)\n  - Verify your active JDK: `java -version`\n  - Ensure it shows Java 21 or higher.\n- **Maven** 3.8.1+ (use the provided `./mvnw` wrapper to avoid local installation issues)\n\n## Build and Run\n\n### Build the application\n```bash\n./mvnw clean package\n```\n\n### Run the application\n```bash\n./mvnw spring-boot:run\n```\n\nAccess the app at [http://localhost:8080](http://localhost:8080)
