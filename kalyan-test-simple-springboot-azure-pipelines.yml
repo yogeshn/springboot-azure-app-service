@@ -1,27 +1,26 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - main
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: ubuntu-22.04
 
 jobs:
-- job: Job1
+- job: BuildAndTest
+  displayName: 'Build and test on JDK 21'
   steps:
-  - script: echo This is Job1 - Hello, Kalyan!
-    displayName: 'Run a one-line script'
+  - task: UseJavaVersion@1
+    displayName: 'Use JDK 21'
+    inputs:
+      versionSpec: '21'
+      architecture: 'x64'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
 
-  - script: |
-      echo Add other tasks to build, test, and deploy your project.
-      echo See https://aka.ms/yaml
-      echo Added by Kalyan
-    displayName: 'Run a multi-line script'
+  - script: mvn dependency:resolve -B
+    displayName: 'Resolve Maven dependencies'
 
-- job: Job2
-  steps:
-  - script: echo This is Job2 - Hello, Konda!
-    displayName: 'Run a one-line script'
+  - script: mvn compile -q
+    displayName: 'Compile application'
+
+  - script: mvn test -B
+    displayName: 'Run tests'
