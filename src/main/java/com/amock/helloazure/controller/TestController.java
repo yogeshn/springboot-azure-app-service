@@ -26,6 +26,6 @@ public class TestController {
 
 	@PostMapping("testpost")
 	public ResponseEntity<MyName> testpost(@RequestBody MyName name) {
-		return new ResponseEntity<MyName>(name, HttpStatus.OK);
+		return ResponseEntity.ok(name);
 	}
 }

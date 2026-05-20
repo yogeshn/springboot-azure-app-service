@@ -4,7 +4,7 @@ public class MyName {
 
 	private String firstName;
 	private String lastName;
-	
+
 	public MyName() {
 		super();
 	}
