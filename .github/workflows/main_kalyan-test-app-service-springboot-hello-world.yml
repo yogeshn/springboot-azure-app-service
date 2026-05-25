@@ -16,6 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    # Java 21 is required to match the project runtime and pom.xml configuration.
     - name: Set up Java version
       uses: actions/setup-java@v4
       with:

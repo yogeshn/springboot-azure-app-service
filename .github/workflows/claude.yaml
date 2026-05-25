@@ -30,6 +30,7 @@ jobs:
         with:
           fetch-depth: 1
 
+      # Java 21 is required to match the project runtime and pom.xml configuration.
       - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
