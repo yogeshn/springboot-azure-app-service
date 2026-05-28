@@ -15,7 +15,10 @@
   <name>springboot-azure-app-service</name>  
   <description>Spring Boot Hello World On Azure</description>  
   <properties> 
-    <java.version>1.8</java.version> 
+    <!-- Build, test, and deploy with JDK 21. Spring Boot 2.1.4.RELEASE is not officially certified on JDK 21, so monitor runtime behaviors closely. -->
+    <java.version>21</java.version>
+    <!-- Spring Framework 5.1 cannot yet emit Java 21 bytecode. Compile artifacts to Java 11 for compatibility while still running them on JDK 21. -->
+    <bytecode.target.version>11</bytecode.target.version>
   </properties>  
   <dependencies> 
     <dependency> 
@@ -38,6 +41,24 @@
         <groupId>org.springframework.boot</groupId>  
         <artifactId>spring-boot-maven-plugin</artifactId> 
       </plugin>  
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <!-- Spring Boot 2.1.4.RELEASE defaults to Java 8. Explicit compiler settings are required for JDK 21 builds. -->
+        <configuration>
+          <release>11</release>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <!-- JDK 21 requires a modern Surefire runtime; this override supersedes the older version inherited from Spring Boot 2.1.4.RELEASE. -->
+        <configuration>
+          <useSystemClassLoader>true</useSystemClassLoader>
+        </configuration>
+      </plugin>
       <plugin> 
         <groupId>com.microsoft.azure</groupId>  
         <artifactId>azure-webapp-maven-plugin</artifactId>  
@@ -57,7 +78,8 @@
           </appSettings>
           <runtime>
             <os>Linux</os>
-            <javaVersion>Java 8</javaVersion>
+            <!-- Java 21 is required. Configure the Azure App Service runtime to use a Java 21 stack (e.g., Java 21/Java SE) via the Azure Portal or IaC templates. -->
+            <javaVersion>Java 21</javaVersion>
             <webContainer>Java SE</webContainer>
           </runtime>
           <deployment>
