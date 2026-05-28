@@ -8,6 +8,18 @@
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
+				<dictionary>
+					<key>org.eclipse.jdt.core.compiler.compliance</key>
+					<value>21</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.jdt.core.compiler.source</key>
+					<value>21</value>
+				</dictionary>
+				<dictionary>
+					<key>org.eclipse.jdt.core.compiler.codegen.targetPlatform</key>
+					<value>21</value>
+				</dictionary>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
