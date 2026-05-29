@@ -13,9 +13,9 @@ public class HelloAzureApplication {
 	}
 
 	@Controller
-	class WebController {
+	static class WebController {
 		
-		@GetMapping
+		@GetMapping("/")
 		public String home(){
 			return "index";
 		}
