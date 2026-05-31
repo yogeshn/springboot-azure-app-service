@@ -16,6 +16,7 @@
   <description>Spring Boot Hello World On Azure</description>  
   <properties> 
     <java.version>21</java.version> 
+    <azure.webapp.plugin.version>2.13.0</azure.webapp.plugin.version>
   </properties>  
   <dependencies> 
     <dependency> 
@@ -41,7 +42,7 @@
       <plugin> 
         <groupId>com.microsoft.azure</groupId>  
         <artifactId>azure-webapp-maven-plugin</artifactId>  
-        <version>2.13.0</version>  
+        <version>${azure.webapp.plugin.version}</version>  
         <configuration>
           <schemaVersion>v2</schemaVersion>
           <subscriptionId>010799ed-43ef-424e-97c9-41e2b17dbd38</subscriptionId>
