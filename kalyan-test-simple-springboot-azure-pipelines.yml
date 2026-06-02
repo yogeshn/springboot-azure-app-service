@@ -9,9 +9,19 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  javaVersion: '21'
+
 jobs:
 - job: Job1
   steps:
+  - task: UseJavaVersion@1
+    displayName: 'Use Java $(javaVersion)'
+    inputs:
+      versionSpec: '$(javaVersion)'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+
   - script: echo This is Job1 - Hello, Kalyan!
     displayName: 'Run a one-line script'
 
@@ -23,5 +33,12 @@ jobs:
 
 - job: Job2
   steps:
+  - task: UseJavaVersion@1
+    displayName: 'Use Java $(javaVersion)'
+    inputs:
+      versionSpec: '$(javaVersion)'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+
   - script: echo This is Job2 - Hello, Konda!
     displayName: 'Run a one-line script'

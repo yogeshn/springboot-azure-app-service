@@ -9,11 +9,19 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  javaVersion: '21'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+steps:
+- task: UseJavaVersion@1
+  displayName: 'Use Java $(javaVersion)'
+  inputs:
+    versionSpec: '$(javaVersion)'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+
+- script: ./mvnw --version
+  displayName: 'Verify Maven Wrapper'
+
+- script: ./mvnw clean verify
+  displayName: 'Build and test'
