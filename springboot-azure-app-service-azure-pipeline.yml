@@ -10,6 +10,11 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+- task: UseJavaVersion@1
+  inputs:
+    versionSpec: '21'
+    jdkArchitecture: 'x64'
+
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
