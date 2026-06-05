@@ -10,6 +10,13 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '21'
+    jdkArchitectureOption: x64
+    jdkSourceOption: PreInstalled
+  displayName: 'Use Java 21'
+
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
