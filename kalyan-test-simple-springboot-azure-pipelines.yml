@@ -12,6 +12,19 @@ pool:
 jobs:
 - job: Job1
   steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+      addToPath: true
+    displayName: 'Use Python'
+
+  - task: UseJavaVersion@0
+    inputs:
+      versionSpec: '21'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+    displayName: 'Use Java 21'
+
   - script: echo This is Job1 - Hello, Kalyan!
     displayName: 'Run a one-line script'
 
