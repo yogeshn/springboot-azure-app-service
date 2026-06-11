@@ -12,6 +12,14 @@ pool:
 jobs:
 - job: Job1
   steps:
+  - task: UseJavaVersion@1
+    inputs:
+      versionSpec: '21'
+      architecture: 'x64'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+    displayName: 'Use Java 21'
+
   - script: echo This is Job1 - Hello, Kalyan!
     displayName: 'Run a one-line script'
 
@@ -23,5 +31,13 @@ jobs:
 
 - job: Job2
   steps:
+  - task: UseJavaVersion@1
+    inputs:
+      versionSpec: '21'
+      architecture: 'x64'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+    displayName: 'Use Java 21'
+
   - script: echo This is Job2 - Hello, Konda!
     displayName: 'Run a one-line script'
