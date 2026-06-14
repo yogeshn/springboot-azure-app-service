@@ -15,7 +15,8 @@
   <name>springboot-azure-app-service</name>  
   <description>Spring Boot Hello World On Azure</description>  
   <properties> 
-    <java.version>21</java.version> 
+    <java.version>21</java.version>
+    <maven.compiler.release>21</maven.compiler.release>
   </properties>  
   <dependencies> 
     <dependency> 
