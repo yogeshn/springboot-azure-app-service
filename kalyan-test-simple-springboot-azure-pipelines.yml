@@ -12,16 +12,27 @@ pool:
 jobs:
 - job: Job1
   steps:
-  - script: echo This is Job1 - Hello, Kalyan!
-    displayName: 'Run a one-line script'
+  - task: JavaToolInstaller@0
+    displayName: 'Use Java 21'
+    inputs:
+      versionSpec: '21'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
 
-  - script: |
-      echo Add other tasks to build, test, and deploy your project.
-      echo See https://aka.ms/yaml
-      echo Added by Kalyan
-    displayName: 'Run a multi-line script'
+  - script: java -version
+    displayName: 'Show Java version'
+
+  - script: mvn clean install
+    displayName: 'Build with Maven'
 
 - job: Job2
   steps:
-  - script: echo This is Job2 - Hello, Konda!
-    displayName: 'Run a one-line script'
+  - task: JavaToolInstaller@0
+    displayName: 'Use Java 21'
+    inputs:
+      versionSpec: '21'
+      jdkArchitectureOption: 'x64'
+      jdkSourceOption: 'PreInstalled'
+
+  - script: java -version
+    displayName: 'Show Java version'
