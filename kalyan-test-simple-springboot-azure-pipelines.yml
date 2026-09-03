@@ -9,6 +9,9 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  JAVA_VERSION: '21'
+
 jobs:
 - job: Job1
   steps:
