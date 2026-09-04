@@ -15,6 +15,7 @@
   <name>springboot-azure-app-service</name>  
   <description>Spring Boot Hello World On Azure</description>  
   <properties> 
+    <!-- Java 21 runtime and compile target -->
     <java.version>21</java.version> 
   </properties>  
   <dependencies> 

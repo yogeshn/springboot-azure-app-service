@@ -21,6 +21,7 @@ jobs:
       with:
         distribution: temurin
         java-version: '21'
+        # Java 21 for build and deploy parity
 
     - name: Build with Maven
       run: mvn clean install
