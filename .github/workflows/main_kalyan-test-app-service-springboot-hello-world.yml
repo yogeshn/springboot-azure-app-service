@@ -22,8 +22,8 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
-    # Java 21 upgrade verified: mvn clean compile + test pass under JDK 21 (per review F1).
-    # No Java 8 support retained; target is Java 21 only.
+    # Java 21 upgrade: CI configured for JDK 21 (setup-java@v4 + temurin '21').
+    # Project targets Java 21 for build and Azure runtime. Older JDKs not used in this workflow.
     - name: Build with Maven
       run: mvn clean install
 
