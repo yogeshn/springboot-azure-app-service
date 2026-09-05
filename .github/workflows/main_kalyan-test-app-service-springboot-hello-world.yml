@@ -22,6 +22,8 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
+    # Java 21 upgrade verified: mvn clean compile + test pass under JDK 21 (per review F1).
+    # No Java 8 support retained; target is Java 21 only.
     - name: Build with Maven
       run: mvn clean install
 
