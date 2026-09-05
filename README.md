@@ -7,9 +7,11 @@ Sample Hello world springboot application to deploy on Azure App Service
 
 ## Build and Run
 ```bash
-./mvnw clean package
+mvn clean package
 java -jar target/springboot-azure-app-service-0.0.1-SNAPSHOT.jar
 ```
+
+> Note: If the Maven wrapper (`./mvnw`) is fully set up in your environment, you may use `./mvnw clean package` instead. The project is configured for Java 21.
 
 ## Endpoints
 - `/` - Home page
