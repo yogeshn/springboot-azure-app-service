@@ -25,10 +25,7 @@ public class TestController {
 	}
 
 	@PostMapping("testpost")
-	public ResponseEntity<MyName> testpost(@RequestBody(required = false) MyName name) {
-		if (name == null) {
-			return new ResponseEntity<MyName>(HttpStatus.BAD_REQUEST);
-		}
+	public ResponseEntity<MyName> testpost(@RequestBody MyName name) {
 		return new ResponseEntity<MyName>(name, HttpStatus.OK);
 	}
 }
