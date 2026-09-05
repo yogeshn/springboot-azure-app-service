@@ -30,6 +30,18 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build with Maven (Java 21)
+        run: mvn -B -q clean compile -DskipTests=true --no-transfer-progress || true
+
+      - name: Verify Java version in build
+        run: java -version 2>&1 | cat; mvn -version 2>&1 | head -3 | cat || true
+
       - name: Run Claude Code
         id: claude
         uses: anthropics/claude-code-action@v1
