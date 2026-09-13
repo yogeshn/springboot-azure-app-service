@@ -9,8 +9,14 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  JAVA_HOME_21_X64: '/usr/lib/jvm/temurin-21-jdk-amd64'
+
 jobs:
 - job: Job1
+  variables:
+    JAVA_HOME: $(JAVA_HOME_21_X64)
+
   steps:
   - script: echo This is Job1 - Hello, Kalyan!
     displayName: 'Run a one-line script'
