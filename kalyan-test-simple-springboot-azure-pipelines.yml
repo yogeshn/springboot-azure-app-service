@@ -10,18 +10,18 @@ pool:
   vmImage: ubuntu-latest
 
 jobs:
-- job: Job1
+- job: Build
   steps:
-  - script: echo This is Job1 - Hello, Kalyan!
-    displayName: 'Run a one-line script'
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: '21'
+      jdkArchitectureOption: 'x64'
 
-  - script: |
-      echo Add other tasks to build, test, and deploy your project.
-      echo See https://aka.ms/yaml
-      echo Added by Kalyan
-    displayName: 'Run a multi-line script'
+  - script: mvn -B -DskipTests package
+    displayName: 'Build with Maven (Java 21)'
 
-- job: Job2
+- job: Info
+  dependsOn: Build
   steps:
-  - script: echo This is Job2 - Hello, Konda!
-    displayName: 'Run a one-line script'
+  - script: echo Build completed on Java 21
+    displayName: 'Post-build message'
