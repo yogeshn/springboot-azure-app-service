@@ -1,0 +1,9 @@
+Checked and updated project to target Java 21.
+- pom.xml now uses <java.version>21</java.version> and configures maven-compiler-plugin 3.11.0 with source/target from that property.
+- Azure Web App Maven plugin runtime updated from Java 8 to Java 21.
+- Eclipse metadata (.classpath, org.eclipse.jdt.core.prefs) updated to use JavaSE-21 and compiler/source/compliance level 21 with release mode enabled.
+- GitHub Actions workflow main_kalyan-test-app-service-springboot-hello-world.yml now sets up Temurin JDK 21 and builds with mvn clean install.
+- README updated to state JDK 21 requirement, basic build/run instructions, and a note that Spring Boot 2.1.4 is not officially certified for Java 21 and should be upgraded for production.
+- web.config already uses JAVA_HOME and does not pin a specific Java version; left unchanged as it will pick up the configured JDK on Azure.
+- Azure DevOps pipeline YAMLs are generic starter scripts with no Java version configuration; left unchanged.
+- grep for '1.8'/'Java 8' now only matches binary artifacts (.git pack and built JAR), not source/config/docs.
